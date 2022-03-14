@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+from operator import countOf
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -74,7 +75,21 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return childGameState.getScore()
+        foodList = newFood.asList()
+        foodDistance = [manhattanDistance(newPos, food) for food in foodList]
+
+        if len(foodDistance) == 0:
+            return 0
+
+        x = 0
+
+        if action == 'Stop':
+            x = -20
+
+        ghostPos = newGhostStates[0].getPosition()
+        ghostDis = manhattanDistance(newPos, ghostPos)
+
+        return childGameState.getScore() + ghostDis/min(foodDistance) + len(newScaredTimes) + x
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -110,6 +125,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
+
+
 
     def getAction(self, gameState):
         """
