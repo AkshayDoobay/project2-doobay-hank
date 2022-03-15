@@ -89,7 +89,7 @@ class ReflexAgent(Agent):
         ghostPos = newGhostStates[0].getPosition()
         ghostDis = manhattanDistance(newPos, ghostPos)
 
-        return childGameState.getScore() + ghostDis / min(foodDistance) + x - min(foodDistance)
+        return childGameState.getScore() + ghostDis / min(foodDistance) + x
 
 
 def scoreEvaluationFunction(currentGameState):
