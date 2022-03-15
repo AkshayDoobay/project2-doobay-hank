@@ -307,8 +307,30 @@ def betterEvaluationFunction(currentGameState):
 
     DESCRIPTION: <write something here so we know what you did>
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    ghost_pos = currentGameState.getGhostPositions()
+    pacman_pos = currentGameState.getPacmanPosition()
+    foodList = currentGameState.getFood().asList()
+    heuristic = 0
+
+    # add up distance from each food position
+    for food in foodList:
+        heuristic += manhattanDistance(pacman_pos, food)
+
+    # add up distance from each ghost
+    # if smaller than zero -- default to zero
+    for ghost in ghost_pos:
+        dist = max(4 - manhattanDistance(pacman_pos, ghost), 0)
+        heuristic += dist
+
+    # add random number to heuristic to satisfy cases where two actions are equally desired
+    heuristic += random.randint(-5, 5)
+
+    # super entice ghost if one option results in winning the game
+    gameWin = 0
+    if currentGameState.isWin():
+        gameWin += 10000
+
+    return currentGameState.getScore() - heuristic + gameWin
 
 
 # Abbreviation
