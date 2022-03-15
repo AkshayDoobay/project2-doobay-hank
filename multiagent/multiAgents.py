@@ -192,13 +192,64 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
+    def max_value (self, gameState, depth, alpha, beta):
+       
+
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return self.evaluationFunction(gameState)
+
+        value = -1000000
+        for action in gameState.getLegalActions(0):
+            value = max(value, self.min_value(gameState.getNextState(0, action), 1, depth, alpha, beta))
+            # pruning
+            if (value > beta):
+                return value
+
+            alpha = max(alpha, value)
+
+        return value
+
+
+    def min_value (self, gameState, agentIndex, depth, alpha, beta):
+        
+
+        if gameState.isWin() or gameState.isLose() or depth == self.depth: 
+            return self.evaluationFunction(gameState)
+
+        value = 1000000
+        for action in gameState.getLegalActions(agentIndex):
+            if agentIndex != gameState.getNumAgents() - 1:
+                value = min(value, self.min_value(gameState.getNextState(agentIndex,action), agentIndex + 1, depth, alpha, beta))
+            # switch back to pacman with a new depth
+            else:  
+                value = min(value, self.max_value(gameState.getNextState(agentIndex, action), depth + 1, alpha, beta))
+            # pruning
+            if (value < alpha):
+                return value
+                
+            beta = min(beta, value)
+
+        return value
+
+    
 
     def getAction(self, gameState):
         """
-        Returns the minimax action using self.depth and self.evaluationFunction
+          Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        alpha = -100000000 
+        beta = 100000000
+
+        value = -100000000
+        bestAction = None
+        for action in gameState.getLegalActions(0):
+            value = self.min_value(gameState.getNextState(0, action), 1, 0, alpha, beta)
+            if (alpha < value):
+                alpha = value
+                bestAction = action
+
+        return bestAction
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
