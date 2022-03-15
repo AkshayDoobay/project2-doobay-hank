@@ -267,13 +267,13 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             actions = [self.ExpectimaxChoice(gameState.getNextState(agentIndex, action), agentIndex + 1, depth) for
                        action in gameState.getLegalActions(agentIndex)]
             return max(actions)
-        # current state is ghost, find min of all actions
+        # current state is ghost, find average of all actions
         # don't need to switch back to pacMan on next iteration of minimax
         elif agentIndex != gameState.getNumAgents() - 1:
             actions = [self.ExpectimaxChoice(gameState.getNextState(agentIndex, action), agentIndex + 1, depth) for
                        action in gameState.getLegalActions(agentIndex)]
             return sum(actions) / len(gameState.getLegalActions(agentIndex))
-        # current state is ghost, find min of all actions
+        # current state is ghost, find average of all actions
         # switch back to pacman on next iteration by resetting state to 0
         else:
             actions = [self.ExpectimaxChoice(gameState.getNextState(agentIndex, action), 0, depth + 1) for action in
