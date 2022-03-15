@@ -206,6 +206,29 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
       Your expectimax agent (question 4)
     """
 
+    def ExpectimaxChoice(self, gameState, agentIndex, depth):
+        # if win, lose, or reached max depth return evaluation of current state
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return self.evaluationFunction(gameState)
+
+        # current state is pacman, find max of all actions
+        if agentIndex == 0:
+            actions = [self.ExpectimaxChoice(gameState.getNextState(agentIndex, action), agentIndex + 1, depth) for
+                       action in gameState.getLegalActions(agentIndex)]
+            return max(actions)
+        # current state is ghost, find min of all actions
+        # don't need to switch back to pacMan on next iteration of minimax
+        elif agentIndex != gameState.getNumAgents() - 1:
+            actions = [self.ExpectimaxChoice(gameState.getNextState(agentIndex, action), agentIndex + 1, depth) for
+                       action in gameState.getLegalActions(agentIndex)]
+            return sum(actions) / len(gameState.getLegalActions(agentIndex))
+        # current state is ghost, find min of all actions
+        # switch back to pacman on next iteration by resetting state to 0
+        else:
+            actions = [self.ExpectimaxChoice(gameState.getNextState(agentIndex, action), 0, depth + 1) for action in
+                       gameState.getLegalActions(agentIndex)]
+            return sum(actions) / len(gameState.getLegalActions(agentIndex))
+
     def getAction(self, gameState):
         """
         Returns the expectimax action using self.depth and self.evaluationFunction
@@ -214,7 +237,16 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        nextActions = gameState.getLegalActions(0)
+        maxVal = -10000
+        bestAction = None
+
+        for action in nextActions:
+            if self.ExpectimaxChoice(gameState.getNextState(0, action), 1, 0) > maxVal:
+                maxVal = self.ExpectimaxChoice(gameState.getNextState(0, action), 1, 0)
+                bestAction = action
+
+        return bestAction
 
 
 def betterEvaluationFunction(currentGameState):
